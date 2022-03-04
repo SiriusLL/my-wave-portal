@@ -1,6 +1,6 @@
 // hre = hardhat runtime environment
 const main = async () => {
-  const [owner, randomPerson] = await hre.ethers.getSigners(); //automagic creates owner and random address
+  const [owner, randomPerson, anotherRandom] = await hre.ethers.getSigners(); //automagic creates owner and random address
   const portalContractFactory = await hre.ethers.getContractFactory(
     "ActivationPortal"
   ); // compiles contracts && generates files under artifacts folder
@@ -28,11 +28,11 @@ const main = async () => {
 
   let portalCountOwner = await portalContract
     .connect(owner)
-    .getPortalsOpenForAddress();
+    .getPortalsOpenForUser();
 
   let portalCountRandom = await portalContract
     .connect(randomPerson)
-    .getPortalsOpenForAddress();
+    .getPortalsOpenForUser();
 
   portalTxn = await portalContract.connect(randomPerson).activatePortal();
   await portalTxn.wait();
@@ -41,11 +41,11 @@ const main = async () => {
 
   portalCountOwner = await portalContract
     .connect(owner)
-    .getPortalsOpenForAddress();
+    .getPortalsOpenForUser();
 
   portalCountRandom = await portalContract
     .connect(randomPerson)
-    .getPortalsOpenForAddress();
+    .getPortalsOpenForUser();
 
   portalTxn = await portalContract.connect(randomPerson).closePortal();
 
@@ -53,11 +53,18 @@ const main = async () => {
 
   portalCountOwner = await portalContract
     .connect(owner)
-    .getPortalsOpenForAddress();
+    .getPortalsOpenForUser();
 
   portalCountRandom = await portalContract
     .connect(randomPerson)
-    .getPortalsOpenForAddress();
+    .getPortalsOpenForUser();
+
+  let getAllSpellCasters = await portalContract.getAllAddresses();
+  console.log(getAllSpellCasters);
+
+  // let getPortalsOpenForAddress = await portalContract.getPortalsOpenForAddress(
+  //   anotherRandom
+  // );
 };
 
 const runMain = async () => {

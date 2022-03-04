@@ -15,9 +15,11 @@ contract ActivationPortal {
     }
 
     function activatePortal() public {
+        if (portalsOpen[msg.sender] < 1) {
+            addr.push(msg.sender);
+        }
         totalPortalsOpened++;
         portalsOpen[msg.sender]++;
-        addr.push(msg.sender);
         console.log("%s has Activated a Portal!", msg.sender); // msg.sender is wallet address of who called the function
     }
 
@@ -39,12 +41,16 @@ contract ActivationPortal {
         return totalPortalsOpened;
     }
 
-    function getPortalsOpenForAddress() public view returns (uint256) {
+    function getPortalsOpenForUser() public view returns (uint256) {
         console.log(
             "%s has opened %d portals",
             msg.sender,
             portalsOpen[msg.sender]
         );
         return portalsOpen[msg.sender];
+    }
+
+    function getAllAddresses() public view returns (address[] memory) {
+        return addr;
     }
 }
