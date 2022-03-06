@@ -5,12 +5,12 @@ const main = async () => {
   console.log("Deploying contracts with account: ", deployer.address);
   console.log("Account balance: ", accountBalance.toString());
 
-  const spellContractFactory = await hre.ethers.getContractFactory(
-    "SpellPortal"
+  const portalContractFactory = await hre.ethers.getContractFactory(
+    "ActivationPortal"
   );
-  const spellContract = await spellContractFactory.deploy();
-  await spellContract.deployed();
-  console.log("SpellPortal address: ", spellContract.address);
+  const portalContract = await portalContractFactory.deploy();
+  await portalContract.deployed();
+  console.log("ActivationPortal address: ", portalContract.address);
 };
 
 const runMain = async () => {

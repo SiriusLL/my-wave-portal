@@ -1,6 +1,6 @@
 // hre = hardhat runtime environment
 const main = async () => {
-  const [owner, randomPerson, anotherRandom] = await hre.ethers.getSigners(); //automagic creates owner and random address
+  const [owner, randomPerson] = await hre.ethers.getSigners(); //automagic creates owner and random address
   const portalContractFactory = await hre.ethers.getContractFactory(
     "ActivationPortal"
   ); // compiles contracts && generates files under artifacts folder
@@ -12,59 +12,18 @@ const main = async () => {
 
   let portalCount;
   portalCount = await portalContract.getTotalPortalsOpen();
+  console.log(portalCount.toNumber());
 
-  let portalTxn = await portalContract.activatePortal();
+  let portalTxn = await portalContract.activatePortal("A message");
   await portalTxn.wait();
 
-  portalCount = await portalContract.getTotalPortalsOpen();
-
-  portalTxn = await portalContract.connect(randomPerson).activatePortal();
-  await portalTxn.wait();
-
-  portalTxn = await portalContract.connect(randomPerson).activatePortal();
-  await portalTxn.wait();
-
-  portalCount = await portalContract.getTotalPortalsOpen();
-
-  let portalCountOwner = await portalContract
-    .connect(owner)
-    .getPortalsOpenForUser();
-
-  let portalCountRandom = await portalContract
+  portalTxn = await portalContract
     .connect(randomPerson)
-    .getPortalsOpenForUser();
-
-  portalTxn = await portalContract.connect(randomPerson).activatePortal();
+    .activatePortal("Another message!");
   await portalTxn.wait();
 
-  portalCount = await portalContract.getTotalPortalsOpen();
-
-  portalCountOwner = await portalContract
-    .connect(owner)
-    .getPortalsOpenForUser();
-
-  portalCountRandom = await portalContract
-    .connect(randomPerson)
-    .getPortalsOpenForUser();
-
-  portalTxn = await portalContract.connect(randomPerson).closePortal();
-
-  portalCount = await portalContract.getTotalPortalsOpen();
-
-  portalCountOwner = await portalContract
-    .connect(owner)
-    .getPortalsOpenForUser();
-
-  portalCountRandom = await portalContract
-    .connect(randomPerson)
-    .getPortalsOpenForUser();
-
-  let getAllSpellCasters = await portalContract.getAllAddresses();
-  console.log(getAllSpellCasters);
-
-  // let getPortalsOpenForAddress = await portalContract.getPortalsOpenForAddress(
-  //   anotherRandom
-  // );
+  let allPortals = await portalContract.getAllPortals();
+  console.log(allPortals);
 };
 
 const runMain = async () => {
