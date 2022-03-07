@@ -8,6 +8,8 @@ contract ActivationPortal {
     // state variable
     uint256 totalPortalsOpen;
 
+    uint256 private seed; // random number variable
+
     event NewPortal(address indexed from, uint256 timestamp, string message);
 
     struct Portal {
@@ -23,6 +25,7 @@ contract ActivationPortal {
 
     constructor() payable {
         console.log("My contracts pants are smarter than yours ;P");
+        seed = (block.timestamp + block.difficulty) % 100; // set the initial seed
     }
 
     function activatePortal(string memory _message) public {
@@ -31,15 +34,19 @@ contract ActivationPortal {
 
         portals.push(Portal(msg.sender, _message, block.timestamp));
 
-        emit NewPortal(msg.sender, block.timestamp, _message);
+        seed = (block.difficulty + block.timestamp + seed) % 100;
+        console.log("Random # generated: %d", seed);
 
-        uint256 powerUpAmount = 0.0001 ether;
-        require(
-            powerUpAmount <= address(this).balance,
-            "Not Enough funds in contract"
-        );
-        (bool success, ) = (msg.sender).call{value: powerUpAmount}("");
-        require(success, "Failed to withdraw money from contract");
+        if (seed <= 50) {
+            uint256 powerUpAmount = 0.0001 ether;
+            require(
+                powerUpAmount <= address(this).balance,
+                "Not Enough funds in contract"
+            );
+            (bool success, ) = (msg.sender).call{value: powerUpAmount}("");
+            require(success, "Failed to withdraw money from contract");
+        }
+        emit NewPortal(msg.sender, block.timestamp, _message);
     }
 
     function getAllPortals() public view returns (Portal[] memory) {
