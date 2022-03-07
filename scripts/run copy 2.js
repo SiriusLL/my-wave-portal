@@ -5,22 +5,11 @@ const main = async () => {
     "ActivationPortal"
   ); // compiles contracts && generates files under artifacts folder
 
-  const portalContract = await portalContractFactory.deploy({
-    value: hre.ethers.utils.parseEther("0.1"),
-  }); // creats local Ethereum network and then destroys it after the script runs
+  const portalContract = await portalContractFactory.deploy(); // creats local Ethereum network and then destroys it after the script runs
   await portalContract.deployed(); // waits for contract deployment, constructor runs on deploy
 
   console.log("Contract deployed to: ", portalContract.address);
   console.log("contract deployed by: ", owner.address);
-
-  let contractBalance = await hre.ethers.provider.getBalance(
-    portalContract.address
-  );
-
-  console.log(
-    "contract balance: ",
-    hre.ethers.utils.formatEther(contractBalance)
-  );
 
   let portalCount;
   portalCount = await portalContract.getTotalPortalsOpen();
@@ -29,27 +18,10 @@ const main = async () => {
   let portalTxn = await portalContract.activatePortal("A message");
   await portalTxn.wait();
 
-  contractBalance = await hre.ethers.provider.getBalance(
-    portalContract.address
-  );
-  console.log("here*******");
-  console.log(
-    "contract Balance: ",
-    hre.ethers.utils.formatEther(contractBalance)
-  );
-
   portalTxn = await portalContract
     .connect(randomPerson)
     .activatePortal("Another message!");
   await portalTxn.wait();
-
-  contractBalance = await hre.ethers.provider.getBalance(
-    portalContract.address
-  );
-  console.log(
-    "contract Balance: ",
-    hre.ethers.utils.formatEther(contractBalance)
-  );
 
   let allPortals = await portalContract.getAllPortals();
   console.log(allPortals);

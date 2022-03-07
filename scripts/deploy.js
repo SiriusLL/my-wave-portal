@@ -8,7 +8,9 @@ const main = async () => {
   const portalContractFactory = await hre.ethers.getContractFactory(
     "ActivationPortal"
   );
-  const portalContract = await portalContractFactory.deploy();
+  const portalContract = await portalContractFactory.deploy({
+    value: hre.ethers.utils.parseEther("0.001"),
+  });
   await portalContract.deployed();
   console.log("ActivationPortal address: ", portalContract.address);
 };

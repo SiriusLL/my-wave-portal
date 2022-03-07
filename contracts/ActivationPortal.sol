@@ -21,7 +21,7 @@ contract ActivationPortal {
     // mapping(address => uint256) public portalsOpen;
     // address[] public addr;
 
-    constructor() {
+    constructor() payable {
         console.log("My contracts pants are smarter than yours ;P");
     }
 
@@ -30,20 +30,17 @@ contract ActivationPortal {
         console.log("%s has Activated a Portal w/ message %s", msg.sender); // msg.sender is wallet address of who called the function
 
         portals.push(Portal(msg.sender, _message, block.timestamp));
-    }
 
-    // function closePortal() public {
-    //     if (portalsOpen[msg.sender] > 0) {
-    //         totalPortalsOpened--;
-    //         portalsOpen[msg.sender]--;
-    //         console.log("%s has Closed a Portal!", msg.sender);
-    //     } else {
-    //         console.log(
-    //             "%s is attempting to close a Portal that does not exist, Is there a spoon?",
-    //             msg.sender
-    //         );
-    //     }
-    // }
+        emit NewPortal(msg.sender, block.timestamp, _message);
+
+        uint256 powerUpAmount = 0.0001 ether;
+        require(
+            powerUpAmount <= address(this).balance,
+            "Not Enough funds in contract"
+        );
+        (bool success, ) = (msg.sender).call{value: powerUpAmount}("");
+        require(success, "Failed to withdraw money from contract");
+    }
 
     function getAllPortals() public view returns (Portal[] memory) {
         return portals;
