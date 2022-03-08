@@ -22,6 +22,7 @@ contract ActivationPortal {
 
     // mapping(address => uint256) public portalsOpen;
     // address[] public addr;
+    mapping(address => uint256) public lastPortalOpenAt;
 
     constructor() payable {
         console.log("My contracts pants are smarter than yours ;P");
@@ -29,11 +30,21 @@ contract ActivationPortal {
     }
 
     function activatePortal(string memory _message) public {
+        // time stamp is 15 min or higher than last
+        require(
+            lastPortalOpenAt[msg.sender] + 15 minutes < block.timestamp,
+            "Portal overload wait 15 min for cooldown"
+        );
+
+        // update current timestamp
+        lastPortalOpenAt[msg.sender] = block.timestamp;
+
         totalPortalsOpen += 1;
         console.log("%s has Activated a Portal w/ message %s", msg.sender); // msg.sender is wallet address of who called the function
 
         portals.push(Portal(msg.sender, _message, block.timestamp));
 
+        // generate new seed for next portal open
         seed = (block.difficulty + block.timestamp + seed) % 100;
         console.log("Random # generated: %d", seed);
 

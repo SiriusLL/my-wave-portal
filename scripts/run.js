@@ -32,6 +32,14 @@ const main = async () => {
   contractBalance = await hre.ethers.provider.getBalance(
     portalContract.address
   );
+
+  portalTxn = await portalContract.activatePortal("A message");
+  await portalTxn.wait();
+
+  contractBalance = await hre.ethers.provider.getBalance(
+    portalContract.address
+  );
+
   console.log("here*******");
   console.log(
     "contract Balance: ",
