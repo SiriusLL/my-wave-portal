@@ -10,11 +10,17 @@ contract ActivationPortal {
 
     uint256 private seed; // random number variable
 
-    event NewPortal(address indexed from, uint256 timestamp, string message);
+    event NewPortal(
+        address indexed from,
+        uint256 timestamp,
+        string message,
+        string name
+    );
 
     struct Portal {
         address Activator; // address of user who activated portal
         string message; //message user sent
+        string name;
         uint256 timestamp; // timestamp when teh user activated portal
     }
 
@@ -29,10 +35,12 @@ contract ActivationPortal {
         seed = (block.timestamp + block.difficulty) % 100; // set the initial seed
     }
 
-    function activatePortal(string memory _message) public {
+    function activatePortal(string memory _message, string memory _name)
+        public
+    {
         // time stamp is 15 min or higher than last
         require(
-            lastPortalOpenAt[msg.sender] + 15 minutes < block.timestamp,
+            lastPortalOpenAt[msg.sender] + 15 seconds < block.timestamp,
             "Portal overload wait 15 min for cooldown"
         );
 
@@ -40,9 +48,13 @@ contract ActivationPortal {
         lastPortalOpenAt[msg.sender] = block.timestamp;
 
         totalPortalsOpen += 1;
-        console.log("%s has Activated a Portal w/ message %s", msg.sender); // msg.sender is wallet address of who called the function
 
-        portals.push(Portal(msg.sender, _message, block.timestamp));
+        portals.push(Portal(msg.sender, _message, _name, block.timestamp));
+        console.log(
+            "%s has Activated a Portal w/ message %s",
+            msg.sender,
+            _message
+        ); // msg.sender is wallet address of who called the function
 
         // generate new seed for next portal open
         seed = (block.difficulty + block.timestamp + seed) % 100;
@@ -57,7 +69,7 @@ contract ActivationPortal {
             (bool success, ) = (msg.sender).call{value: powerUpAmount}("");
             require(success, "Failed to withdraw money from contract");
         }
-        emit NewPortal(msg.sender, block.timestamp, _message);
+        emit NewPortal(msg.sender, block.timestamp, _message, _name);
     }
 
     function getAllPortals() public view returns (Portal[] memory) {

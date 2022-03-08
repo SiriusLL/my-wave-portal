@@ -26,19 +26,19 @@ const main = async () => {
   portalCount = await portalContract.getTotalPortalsOpen();
   console.log(portalCount.toNumber());
 
-  let portalTxn = await portalContract.activatePortal("A message");
+  let portalTxn = await portalContract.activatePortal("A message", "John");
   await portalTxn.wait();
 
   contractBalance = await hre.ethers.provider.getBalance(
     portalContract.address
   );
 
-  portalTxn = await portalContract.activatePortal("A message");
-  await portalTxn.wait();
+  // portalTxn = await portalContract.activatePortal("A message", "John");
+  // await portalTxn.wait();
 
-  contractBalance = await hre.ethers.provider.getBalance(
-    portalContract.address
-  );
+  // contractBalance = await hre.ethers.provider.getBalance(
+  //   portalContract.address
+  // );
 
   console.log("here*******");
   console.log(
@@ -48,7 +48,7 @@ const main = async () => {
 
   portalTxn = await portalContract
     .connect(randomPerson)
-    .activatePortal("Another message!");
+    .activatePortal("Another message!", "Nancy");
   await portalTxn.wait();
 
   contractBalance = await hre.ethers.provider.getBalance(
